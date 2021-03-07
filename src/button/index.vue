@@ -18,5 +18,6 @@ export default Button
   margin: 0;
   padding: 0 0.25em;
   border-radius: 4pt;
+  display: inline-block;
 }
 </style>

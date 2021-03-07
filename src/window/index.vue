@@ -3,10 +3,9 @@
     <div v-show="isOpen" class="window" :style="styleWindow" ref="window" @mousedown="activate" @touchstart="activate">
       <div class="titlebar" :style="styleTitlebar" ref="titlebar">
         <div class="title">
-          <template v-if="$slots.title">
-            <slot name="title" />
+          <template v-if="closeButton">
+              <my-button @click="closeButtonClick">&times;</my-button>
           </template>
-          <template v-else>{{title}}</template>
           <template v-if="maximizeButton">
               <my-button @click="minimizeWindow">&minus;</my-button>
           </template>
@@ -16,9 +15,10 @@
           <template v-if="maximizeButton && !maximized">
               <my-button @click="maximizeWindow">&plus;</my-button>
           </template>
-          <template v-if="closeButton">
-              <my-button @click="closeButtonClick">&times;</my-button>
+          <template v-if="$slots.title">
+            <slot name="title" />
           </template>
+          <template v-else>{{title}}</template>
         </div>
       </div>
       <div class="content" :style="styleContent" ref="content">
