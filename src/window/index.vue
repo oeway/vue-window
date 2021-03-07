@@ -7,10 +7,19 @@
             <slot name="title" />
           </template>
           <template v-else>{{title}}</template>
+          <template v-if="maximizeButton">
+              <my-button @click="minimizeWindow">&minus;</my-button>
+          </template>
+          <template v-if="maximizeButton && maximized">
+              <my-button @click="maximizeWindow">&#128470;</my-button>
+          </template>
+          <template v-if="maximizeButton && !maximized">
+              <my-button @click="maximizeWindow">&plus;</my-button>
+          </template>
+          <template v-if="closeButton">
+              <my-button @click="closeButtonClick">&times;</my-button>
+          </template>
         </div>
-        <template v-if="closeButton">
-          <my-button @click="closeButtonClick">&times;</my-button>
-        </template>
       </div>
       <div class="content" :style="styleContent" ref="content">
         <slot />

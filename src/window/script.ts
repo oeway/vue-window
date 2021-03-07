@@ -32,6 +32,15 @@ export class WindowType extends Vue {
   closeButton!: boolean
 
   @Prop({ type: Boolean, default: false })
+  maximized!: boolean
+
+  @Prop({ type: Boolean, default: false })
+  minimized!: boolean
+
+  @Prop({ type: Boolean, default: true })
+  maximizeButton!: boolean
+
+  @Prop({ type: Boolean, default: false })
   resizable!: boolean
 
   @Prop({ type: Boolean, default: false })
@@ -52,6 +61,12 @@ export class WindowType extends Vue {
   @Prop({ default: 'visible' })
   overflow!: string
 
+  @Prop({ type: Number, default: 0 })
+  maximizeTopOffset!: number
+
+  @Prop({ type: Number, default: 0 })
+  maximizeRightOffset!: number
+
   @Inject(WINDOW_STYLE_KEY)
   windowStyle!: WindowStyle
 
@@ -59,14 +74,25 @@ export class WindowType extends Vue {
 
   draggableHelper?: DraggableHelper
   resizableHelper?: ResizableHelper
+  
+  private lastRect !:Rect
 
   zElement!: ZElement
+
+  resizeDispatch!: number
 
   mounted() {
     instances.push(this)
     this.zElement = new ZElement(this.zGroup, zIndex => this.zIndex = `${zIndex}`)
     this.isOpen && this.onIsOpenChange(true)
     windows.add(this)
+    if(this.maximized){
+        this.maximizeSize()
+    }else if(this.minimized){
+        this.minimizeWindow()
+    }else{
+        this.defaultSize()
+    }
   }
 
   beforeDestroy() {
@@ -92,6 +118,54 @@ export class WindowType extends Vue {
   activate() {
     this.zElement.raise()
     this.$emit('activate')
+  }
+
+  maximizeWindow() {
+      if(this.maximized || this.minimized){
+          this.defaultSize();
+      }else{
+          this.loadLastRect()
+          this.maximizeSize();
+      }
+  }
+
+  minimizeWindow() {
+      if(this.minimized){
+          this.defaultSize();
+      }else{
+          if(!this.maximized){
+              this.loadLastRect()
+          }
+          this.minimizeSize();
+      }
+  }
+
+  maximizeSize(){
+      this.maximized = true;
+      this.minimized = false;
+      let rec = naturalSize(this.titlebarElement())
+      this.setWindowRect({width:window.innerWidth - this.maximizeRightOffset,height:window.innerHeight - rec.height - this.maximizeTopOffset,left:0,top:this.maximizeTopOffset})
+      this.onWindowResize(true)
+      this.onWindowMove(false)
+  }
+
+  defaultSize() {
+      this.maximized = false;
+      this.minimized = false
+      if(this.lastRect){
+          this.setWindowRect(this.lastRect)
+      }else{
+          this.setWindowRect({width:this.width,height:this.height})
+      }
+
+      this.onWindowResize(false)
+      this.onWindowMove(false)
+  }
+
+  minimizeSize() {
+      this.maximized = false;
+      this.minimized = true;
+      this.setWindowRect({width:100,height:0,left:0,top:window.innerHeight - 100})
   }
 
   get styleWindow() {
@@ -251,6 +325,14 @@ export class WindowType extends Vue {
       this.$emit('update:width', cW1)
       this.$emit('update:height', cH1)
     }
+    if(this.resizeDispatch != 0){
+        clearTimeout(this.resizeDispatch)
+        this.resizeDispatch = 0
+    }
+
+    this.resizeDispatch = setTimeout(()=>{
+                            window.dispatchEvent(new Event('resize'))
+                            }, 1000);
   }
 
   private onWindowMove(emitUpdateEvent = true) {
@@ -330,6 +412,18 @@ export class WindowType extends Vue {
   closeButtonClick() {
     this.$emit('closebuttonclick')
     this.$emit('update:isOpen', false)
+  }
+
+  private loadLastRect() {
+      const w = this.windowElement()
+      if(w.style.width != undefined && w.style.height != undefined && w.style.left != undefined && w.style.top != undefined){
+          this.lastRect = {width: parseFloat(w.style.width.substring(0,w.style.width.length - 2)),
+              height: parseFloat(w.style.height.substring(0,w.style.height.length - 2)) - this.titlebarElement().getBoundingClientRect().height,
+              left: parseFloat(w.style.left.substring(0,w.style.left.length - 2)),
+              top: parseFloat(w.style.top.substring(0,w.style.top.length - 2))
+          }
+      }
+
   }
 }
 
