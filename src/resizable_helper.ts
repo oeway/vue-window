@@ -118,6 +118,7 @@ abstract class HandleBase {
     this.setPosition(e)
     this.fixPosition()
     this.helper.options.onResize && this.helper.options.onResize()
+    this.container.style.pointerEvents = 'none'
   }
 
   private fixPosition() {
@@ -156,6 +157,7 @@ abstract class HandleBase {
     this.unbindUp!()
     this.unbindMove!()
     this.unbindUp = this.unbindMove = undefined
+    this.container.style.pointerEvents = 'all'
   }
 
   protected abstract applyStyle(style: CSSStyleDeclaration): void

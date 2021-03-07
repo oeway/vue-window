@@ -10,6 +10,7 @@ export declare class DraggableHelper {
     private unbindDown;
     private unbindMove?;
     private unbindUp?;
+    private unbindLeave?;
     constructor(handle: HTMLElement, container: HTMLElement, options?: Options);
     teardown(): void;
     private offsetX;
@@ -17,4 +18,5 @@ export declare class DraggableHelper {
     private mousedown;
     private mousemove;
     private mouseup;
+    private mouseleave;
 }
