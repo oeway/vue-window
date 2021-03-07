@@ -31,13 +31,11 @@ export class WindowType extends Vue {
   @Prop({ type: Boolean, default: false })
   closeButton!: boolean
 
-  @Prop({ type: Boolean, default: false })
-  maximized!: boolean
+  private maximized: boolean = false;
+
+  private minimized: boolean = false;
 
   @Prop({ type: Boolean, default: false })
-  minimized!: boolean
-
-  @Prop({ type: Boolean, default: true })
   maximizeButton!: boolean
 
   @Prop({ type: Boolean, default: false })
@@ -118,6 +116,9 @@ export class WindowType extends Vue {
   activate() {
     this.zElement.raise()
     this.$emit('activate')
+    if(this.minimized){
+      this.maximizeWindow();
+    }
   }
 
   maximizeWindow() {
