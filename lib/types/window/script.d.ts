@@ -9,7 +9,7 @@ export declare class WindowType extends Vue {
     closeButton: boolean;
     private maximized;
     private minimized;
-    windowSizeState: string;
+    sizeState: string;
     maximizeButton: boolean;
     minimizeStyle: {
         [key: string]: string;
@@ -37,11 +37,11 @@ export declare class WindowType extends Vue {
     titlebarElement(): HTMLElement;
     contentElement(): HTMLElement;
     activate(): void;
-    maximizeSize(): void;
-    normalSize(): void;
     static setStyleAttribute(element: HTMLElement, attrs: {
         [key: string]: string;
     }): void;
+    maximizeSize(): void;
+    normalSize(): void;
     minimizeSize(): void;
     readonly styleWindow: {
         zIndex: string;
@@ -841,7 +841,7 @@ export declare class WindowType extends Vue {
     };
     onResizableChange(resizable: boolean): void;
     private openCount;
-    onWindowSizeStateChange(windowSizeState: string): void;
+    onWindowSizeStateChange(sizeState: string): void;
     onIsOpenChange(isOpen: boolean): void;
     onZGroupChange(): void;
     fixPosition(): void;

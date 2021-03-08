@@ -12,4 +12,5 @@ export declare const WINDOW_STYLE_KEY = "@hscmap/vue-window/windowStyle";
 export declare function StyleFactory(windowStyle: WindowStyle): vue.ComponentOptions<Vue>;
 export declare const StyleBlack: vue.ComponentOptions<Vue>;
 export declare const StyleWhite: vue.ComponentOptions<Vue>;
+export declare const StyleMaterial: vue.ComponentOptions<Vue>;
 export declare const StyleMetal: vue.ComponentOptions<Vue>;

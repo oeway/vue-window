@@ -1,7 +1,7 @@
 <template>
   <transition name="fade" @after-leave="$emit('close')" @after-enter="$emit('open')">
     <div v-show="isOpen" class="window" :style="styleWindow" ref="window" @mousedown="activate" @touchstart="activate">
-      <div class="titlebar" :style="styleTitlebar" ref="titlebar" @click="activate">
+      <div class="titlebar" @dblclick="maximized?normalSize():maximizeSize()" style="cursor: default;" :style="styleTitlebar" ref="titlebar" @click="activate">
         <div class="title" style="text-align:center">
           <div style="position: absolute; left:0" v-if="!minimized">
             <template v-if="closeButton">
@@ -11,7 +11,7 @@
                 <my-button @click="minimizeSize">&minus;</my-button>
             </template>
             <template v-if="maximizeButton && maximized">
-                <my-button @click="normalSize">&#128470;</my-button>
+                <my-button @click="normalSize">&#9723;</my-button>
             </template>
             <template v-if="maximizeButton && !maximized">
                 <my-button @click="maximizeSize">&plus;</my-button>

@@ -36,7 +36,7 @@ export class WindowType extends Vue {
   private minimized: boolean = false;
 
   @Prop({ type: String, default: 'normal' })
-  windowSizeState!: string
+  sizeState!: string
 
   @Prop({ type: Boolean, default: false })
   maximizeButton!: boolean
@@ -96,7 +96,7 @@ export class WindowType extends Vue {
       elm.style.pointerEvents = 'none';
     })
     this.isOpen && this.onIsOpenChange(true)
-    this.windowSizeState &&  this.onWindowSizeStateChange(this.windowSizeState)
+    this.sizeState &&  this.onWindowSizeStateChange(this.sizeState)
     windows.add(this)
     if(this.maximized){
         this.maximizeSize()
@@ -143,6 +143,14 @@ export class WindowType extends Vue {
     }, 0)
   }
 
+  public static setStyleAttribute(element: HTMLElement, attrs: { [key: string]: string }): void {
+      if (attrs !== undefined) {
+          Object.keys(attrs).forEach((key: string) => {
+              return element.style.setProperty(key, attrs[key]);
+          });
+      }
+  }
+
   maximizeSize(){
       if(!this.minimized && !this.maximized)
         this.loadLastRect()
@@ -152,7 +160,8 @@ export class WindowType extends Vue {
       this.setWindowRect({width:window.innerWidth - this.maximizeRightOffset,height:window.innerHeight - rec.height - this.maximizeTopOffset,left:0,top:this.maximizeTopOffset})
       this.onWindowResize(true)
       this.onWindowMove(false)
-      this.$emit('update:windowSizeState', 'maximized')
+      this.$emit('update:sizeState', 'maximized')
+      this.$emit('size-state-change', 'maximized')
   }
 
   normalSize() {
@@ -168,15 +177,8 @@ export class WindowType extends Vue {
 
       this.onWindowResize(false)
       this.onWindowMove(false)
-      this.$emit('update:windowSizeState', 'normal')
-  }
-
-  public static setStyleAttribute(element: HTMLElement, attrs: { [key: string]: string }): void {
-      if (attrs !== undefined) {
-          Object.keys(attrs).forEach((key: string) => {
-              return element.style.setProperty(key, attrs[key]);
-          });
-      }
+      this.$emit('update:sizeState', 'normal')
+      this.$emit('size-state-change', 'normal')
   }
 
   minimizeSize() {
@@ -193,7 +195,8 @@ export class WindowType extends Vue {
       }
       else
         this.setWindowRect({width:100,height:0,left:0,top:window.innerHeight - tH})
-      this.$emit('update:windowSizeState', 'minimized')
+      this.$emit('update:sizeState', 'minimized')
+      this.$emit('size-state-change', 'minimized')
   }
 
   get styleWindow() {
@@ -227,14 +230,14 @@ export class WindowType extends Vue {
 
   private openCount = 0
 
-  @Watch('windowSizeState')
-  onWindowSizeStateChange(windowSizeState: string) {
+  @Watch('sizeState')
+  onWindowSizeStateChange(sizeState: string) {
     this.$nextTick(() => {
-      if(windowSizeState==='maximized'){
+      if(sizeState==='maximized'){
         if(!this.maximized)
         this.maximizeSize()
       }
-      else if(windowSizeState==='minimized'){
+      else if(sizeState==='minimized'){
         if(!this.minimized)
         this.minimizeSize()
       }
@@ -276,8 +279,8 @@ export class WindowType extends Vue {
     const rect = w.getBoundingClientRect()
     if (rect.left < 0) w.style.left = `0px`
     if (rect.top < 0) w.style.top = `0px`
-    if (rect.right > window.innerWidth) w.style.left = `${window.innerWidth - rect.width}px`
-    if (rect.bottom > window.innerHeight) w.style.top = `${window.innerHeight - rect.height}px`
+    if (rect.width > window.innerWidth) w.style.width = `${window.innerWidth}px`;
+    if (rect.height > window.innerHeight) w.style.height = `${window.innerHeight}px`;
   }
 
   @Prop({ type: Number })
@@ -326,6 +329,8 @@ export class WindowType extends Vue {
     if (top != undefined) {
       w.style.top = `${top}px`
     }
+    w.style.display = 'block'
+    this.fixPosition()
   }
 
   @Prop({ type: Number, default: 1 })
@@ -455,7 +460,7 @@ export class WindowType extends Vue {
 
 
   closeButtonClick() {
-    this.$emit('closebuttonclick')
+    this.$emit('close')
     this.$emit('update:isOpen', false)
   }
 

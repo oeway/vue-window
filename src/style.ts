@@ -76,6 +76,34 @@ export const StyleWhite: vue.ComponentOptions<Vue> = StyleFactory({
   }
 })
 
+export const StyleMaterial: vue.ComponentOptions<Vue> = StyleFactory({
+  window: {
+    color: 'white',
+    boxShadow: '0 2pt 4pt rgba(0, 0, 0, 0.5)',
+    backgroundColor: 'white'
+  },
+  titlebar: {
+    textAlign: 'center',
+    borderRadius: '2pt 2pt 0 0',
+    padding: '0.2em',
+    backgroundColor: '#448bff',
+  },
+  content: {
+    color: 'black',
+  },
+  button: {
+    borderRadius: '8pt',
+    cursor: 'pointer',
+    color: '#ff5252',
+  },
+  buttonHover: {
+    backgroundColor: '#f7f7f733'
+  },
+  buttonActive: {
+    color: '#fff',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)'
+  }
+})  
 
 export const StyleMetal: vue.ComponentOptions<Vue> = StyleFactory({
   window: {
