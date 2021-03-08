@@ -7,7 +7,7 @@ module.exports = {
     output: {
         path: `${__dirname}/lib`,
         filename: 'index.js',
-        libraryTarget: 'commonjs',
+        libraryTarget: 'umd',
     },
     resolve: {
         extensions: ['.ts', '.js'],
@@ -28,13 +28,7 @@ module.exports = {
             }
         ],
     },
-    externals: [
-        // include only relative assets
-        function (context, request, callback) {
-            if (!request.match(/(?:^|!)(?:\.|\.\.)?\//))
-                return callback(null, `commonjs ${request}`)
-            callback()
-        }
+    externals:[
     ],
     plugins: [
         new VueLoaderPlugin(),

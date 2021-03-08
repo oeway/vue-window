@@ -43,7 +43,6 @@ export class DraggableHelper {
     this.container.style.left = `${e.clientX - this.offsetX}px`
     this.container.style.top = `${e.clientY - this.offsetY}px`
     this.options.onMove && this.options.onMove()
-    this.container.style.pointerEvents = 'none'
   }
 
   private mouseup = (e: SinglePointerEvent) => {
@@ -53,6 +52,5 @@ export class DraggableHelper {
     if(this.unbindUp) this.unbindUp!()
     if(this.unbindMove) this.unbindMove!()
     this.unbindUp = this.unbindMove = undefined
-    this.container.style.pointerEvents = 'all'
   }
 }

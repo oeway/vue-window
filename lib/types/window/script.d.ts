@@ -24,6 +24,7 @@ export declare class WindowType extends Vue {
     draggableHelper?: DraggableHelper;
     resizableHelper?: ResizableHelper;
     private lastRect;
+    private lastMaximized;
     zElement: ZElement;
     resizeDispatch: number;
     mounted(): void;
@@ -32,8 +33,6 @@ export declare class WindowType extends Vue {
     titlebarElement(): HTMLElement;
     contentElement(): HTMLElement;
     activate(): void;
-    maximizeWindow(): void;
-    minimizeWindow(): void;
     maximizeSize(): void;
     defaultSize(): void;
     minimizeSize(): void;
