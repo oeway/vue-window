@@ -4,6 +4,9 @@
       <div class="titlebar" @dblclick="maximized?normalSize():maximizeSize()" style="cursor: default;" :style="styleTitlebar" ref="titlebar" @click="activate">
         <div class="title" style="text-align:center">
           <div style="position: absolute; left:0" v-if="!minimized">
+            <template v-if="controlButtons">
+                <my-button v-for="btn in controlButtons" :key="btn.label" @click="btn.callback()">{{btn.label}}</my-button>
+            </template>
             <template v-if="closeButton">
                 <my-button @click="closeButtonClick">&times;</my-button>
             </template>

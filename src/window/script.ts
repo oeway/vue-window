@@ -31,6 +31,9 @@ export class WindowType extends Vue {
   @Prop({ type: Boolean, default: false })
   closeButton!: boolean
 
+  @Prop({ type: Array, default(){return null} })
+  controlButtons!: []
+
   private maximized: boolean = false;
 
   private minimized: boolean = false;
@@ -136,11 +139,9 @@ export class WindowType extends Vue {
       else
         this.normalSize();
     }
-    setTimeout(()=>{
-      const elm = this.contentElement()
-      // enable pointer events for iframe
-      elm.style.pointerEvents = 'all';
-    }, 0)
+    const elm = this.contentElement()
+    // enable pointer events for iframe
+    elm.style.pointerEvents = 'all';
   }
 
   public static setStyleAttribute(element: HTMLElement, attrs: { [key: string]: string }): void {
@@ -156,8 +157,7 @@ export class WindowType extends Vue {
         this.loadLastRect()
       this.maximized = true
       this.minimized = false
-      let rec = naturalSize(this.titlebarElement())
-      this.setWindowRect({width:window.innerWidth - this.maximizeRightOffset,height:window.innerHeight - rec.height - this.maximizeTopOffset,left:0,top:this.maximizeTopOffset})
+      this.setWindowRect({width:window.innerWidth - this.maximizeRightOffset,height:window.innerHeight - this.maximizeTopOffset,left:0,top:this.maximizeTopOffset})
       this.onWindowResize(true)
       this.onWindowMove(false)
       this.$emit('update:sizeState', 'maximized')
@@ -240,6 +240,15 @@ export class WindowType extends Vue {
       else if(sizeState==='minimized'){
         if(!this.minimized)
         this.minimizeSize()
+      }
+      else if(sizeState==='restore'){
+        if(!this.lastMaximized){
+          this.normalSize()
+        }
+        else{
+          this.maximizeSize()
+        }
+        this.activate()
       }
       else{
         if(this.minimized || this.maximized)
