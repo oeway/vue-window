@@ -35,8 +35,14 @@ export class WindowType extends Vue {
 
   private minimized: boolean = false;
 
+  @Prop({ type: String, default: 'normal' })
+  windowSizeState!: string
+
   @Prop({ type: Boolean, default: false })
   maximizeButton!: boolean
+
+  @Prop({ type: Object, default(){return null} })
+  minimizeStyle!: { [key: string]: string }
 
   @Prop({ type: Boolean, default: false })
   resizable!: boolean
@@ -90,13 +96,14 @@ export class WindowType extends Vue {
       elm.style.pointerEvents = 'none';
     })
     this.isOpen && this.onIsOpenChange(true)
+    this.windowSizeState &&  this.onWindowSizeStateChange(this.windowSizeState)
     windows.add(this)
     if(this.maximized){
         this.maximizeSize()
     }else if(this.minimized){
         this.minimizeSize()
     }else{
-        this.defaultSize()
+        this.normalSize()
     }
   }
 
@@ -127,7 +134,7 @@ export class WindowType extends Vue {
       if(this.lastMaximized)
         this.maximizeSize();
       else
-        this.defaultSize();
+        this.normalSize();
     }
     setTimeout(()=>{
       const elm = this.contentElement()
@@ -145,9 +152,10 @@ export class WindowType extends Vue {
       this.setWindowRect({width:window.innerWidth - this.maximizeRightOffset,height:window.innerHeight - rec.height - this.maximizeTopOffset,left:0,top:this.maximizeTopOffset})
       this.onWindowResize(true)
       this.onWindowMove(false)
+      this.$emit('update:windowSizeState', 'maximized')
   }
 
-  defaultSize() {
+  normalSize() {
       if(!this.minimized && !this.maximized)
         this.loadLastRect()
       this.maximized = false
@@ -160,6 +168,15 @@ export class WindowType extends Vue {
 
       this.onWindowResize(false)
       this.onWindowMove(false)
+      this.$emit('update:windowSizeState', 'normal')
+  }
+
+  public static setStyleAttribute(element: HTMLElement, attrs: { [key: string]: string }): void {
+      if (attrs !== undefined) {
+          Object.keys(attrs).forEach((key: string) => {
+              return element.style.setProperty(key, attrs[key]);
+          });
+      }
   }
 
   minimizeSize() {
@@ -170,7 +187,13 @@ export class WindowType extends Vue {
       this.minimized = true
       const t = this.titlebarElement()
       const tH = contentSize(t).height
-      this.setWindowRect({width:100,height:0,left:0,top:window.innerHeight - tH})
+      if(this.minimizeStyle){
+        const w = this.windowElement()
+        WindowType.setStyleAttribute(w, this.minimizeStyle)
+      }
+      else
+        this.setWindowRect({width:100,height:0,left:0,top:window.innerHeight - tH})
+      this.$emit('update:windowSizeState', 'minimized')
   }
 
   get styleWindow() {
@@ -203,6 +226,24 @@ export class WindowType extends Vue {
   }
 
   private openCount = 0
+
+  @Watch('windowSizeState')
+  onWindowSizeStateChange(windowSizeState: string) {
+    this.$nextTick(() => {
+      if(windowSizeState==='maximized'){
+        if(!this.maximized)
+        this.maximizeSize()
+      }
+      else if(windowSizeState==='minimized'){
+        if(!this.minimized)
+        this.minimizeSize()
+      }
+      else{
+        if(this.minimized || this.maximized)
+        this.normalSize()
+      }
+    })
+  }
 
   @Watch('isOpen')
   onIsOpenChange(isOpen: boolean) {

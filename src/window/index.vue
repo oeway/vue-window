@@ -11,7 +11,7 @@
                 <my-button @click="minimizeSize">&minus;</my-button>
             </template>
             <template v-if="maximizeButton && maximized">
-                <my-button @click="defaultSize">&#128470;</my-button>
+                <my-button @click="normalSize">&#128470;</my-button>
             </template>
             <template v-if="maximizeButton && !maximized">
                 <my-button @click="maximizeSize">&plus;</my-button>
