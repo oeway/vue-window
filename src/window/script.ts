@@ -259,6 +259,8 @@ export class WindowType extends Vue {
         if(this.minimized || this.maximized)
         this.normalSize()
       }
+    
+      this.onWindowResize(false)
     })
   }
 
@@ -381,8 +383,8 @@ export class WindowType extends Vue {
     const tH = contentSize(t).height
     const cW1 = wW
     const cH1 = (wH - tH)
-    c.style.width = `${cW1}px`
-    c.style.height = `${cH1}px`
+    c.style.width = `100%`
+    c.style.height = `calc(100% - ${tH}px)`
     fixPosition()
     this.$emit('resize', new WindowResizeEvent(cW1, cH1))
     if (emitUpdateEvent) {
