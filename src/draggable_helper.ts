@@ -10,7 +10,6 @@ export class DraggableHelper {
   private unbindDown: () => void
   private unbindMove?: () => void
   private unbindUp?: () => void
-  private unbindLeave?: () => void
 
   constructor(readonly handle: HTMLElement, readonly container: HTMLElement, readonly options: Options = {}) {
     this.unbindDown = SinglePointerEvent.bindDown(handle, this.mousedown)
@@ -29,16 +28,18 @@ export class DraggableHelper {
 
   private mousedown = (e: SinglePointerEvent) => {
     e.preventDefault()
+    e.stopPropagation()
     const { left, top } = this.handle.getBoundingClientRect()
     this.offsetX = e.clientX - left
     this.offsetY = e.clientY - top
     this.options.onMoveStart && this.options.onMoveStart()
     this.unbindMove = SinglePointerEvent.bindMove(document, this.mousemove)
-    this.unbindUp = SinglePointerEvent.bindUp(document, this.mouseup)
-    this.unbindLeave = SinglePointerEvent.bindUp(document, this.mouseleave)
+    this.unbindUp = SinglePointerEvent.bindUp(document, this.mouseup)   
   }
 
   private mousemove = (e: SinglePointerEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
     this.container.style.left = `${e.clientX - this.offsetX}px`
     this.container.style.top = `${e.clientY - this.offsetY}px`
     this.options.onMove && this.options.onMove()
@@ -46,15 +47,12 @@ export class DraggableHelper {
   }
 
   private mouseup = (e: SinglePointerEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
     this.options.onMoveEnd && this.options.onMoveEnd()
-    this.unbindUp!()
-    this.unbindMove!()
-    this.unbindLeave!()
-    this.unbindUp = this.unbindMove = this.unbindLeave = undefined
+    if(this.unbindUp) this.unbindUp!()
+    if(this.unbindMove) this.unbindMove!()
+    this.unbindUp = this.unbindMove = undefined
     this.container.style.pointerEvents = 'all'
-  }
-
-  private mouseleave = (e: SinglePointerEvent) => {
-    this.mouseup(e)
   }
 }

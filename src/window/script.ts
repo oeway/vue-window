@@ -73,7 +73,8 @@ export class WindowType extends Vue {
   draggableHelper?: DraggableHelper
   resizableHelper?: ResizableHelper
   
-  private lastRect !:Rect
+  private lastRect!:Rect
+  private lastMaximized!:boolean
 
   zElement!: ZElement
 
@@ -81,13 +82,19 @@ export class WindowType extends Vue {
 
   mounted() {
     instances.push(this)
-    this.zElement = new ZElement(this.zGroup, zIndex => this.zIndex = `${zIndex}`)
+    this.zElement = new ZElement(this.zGroup, zIndex => {
+      // z changed
+      this.zIndex = `${zIndex}`
+      const elm = this.contentElement()
+      // disable pointer events for iframe
+      elm.style.pointerEvents = 'none';
+    })
     this.isOpen && this.onIsOpenChange(true)
     windows.add(this)
     if(this.maximized){
         this.maximizeSize()
     }else if(this.minimized){
-        this.minimizeWindow()
+        this.minimizeSize()
     }else{
         this.defaultSize()
     }
@@ -117,33 +124,23 @@ export class WindowType extends Vue {
     this.zElement.raise()
     this.$emit('activate')
     if(this.minimized){
-      this.maximizeWindow();
+      if(this.lastMaximized)
+        this.maximizeSize();
+      else
+        this.defaultSize();
     }
-  }
-
-  maximizeWindow() {
-      if(this.maximized || this.minimized){
-          this.defaultSize();
-      }else{
-          this.loadLastRect()
-          this.maximizeSize();
-      }
-  }
-
-  minimizeWindow() {
-      if(this.minimized){
-          this.defaultSize();
-      }else{
-          if(!this.maximized){
-              this.loadLastRect()
-          }
-          this.minimizeSize();
-      }
+    setTimeout(()=>{
+      const elm = this.contentElement()
+      // enable pointer events for iframe
+      elm.style.pointerEvents = 'all';
+    }, 0)
   }
 
   maximizeSize(){
-      this.maximized = true;
-      this.minimized = false;
+      if(!this.minimized && !this.maximized)
+        this.loadLastRect()
+      this.maximized = true
+      this.minimized = false
       let rec = naturalSize(this.titlebarElement())
       this.setWindowRect({width:window.innerWidth - this.maximizeRightOffset,height:window.innerHeight - rec.height - this.maximizeTopOffset,left:0,top:this.maximizeTopOffset})
       this.onWindowResize(true)
@@ -151,7 +148,9 @@ export class WindowType extends Vue {
   }
 
   defaultSize() {
-      this.maximized = false;
+      if(!this.minimized && !this.maximized)
+        this.loadLastRect()
+      this.maximized = false
       this.minimized = false
       if(this.lastRect){
           this.setWindowRect(this.lastRect)
@@ -164,9 +163,14 @@ export class WindowType extends Vue {
   }
 
   minimizeSize() {
-      this.maximized = false;
-      this.minimized = true;
-      this.setWindowRect({width:100,height:0,left:0,top:window.innerHeight - 100})
+      if(!this.minimized && !this.maximized)
+        this.loadLastRect()
+      this.lastMaximized = this.maximized
+      this.maximized = false
+      this.minimized = true
+      const t = this.titlebarElement()
+      const tH = contentSize(t).height
+      this.setWindowRect({width:100,height:0,left:0,top:window.innerHeight - tH})
   }
 
   get styleWindow() {
@@ -273,8 +277,7 @@ export class WindowType extends Vue {
       w.style.width = `${width}px`
     }
     if (height != undefined) {
-      const tHeight = contentSize(this.titlebarElement()).height
-      w.style.height = `${height + tHeight}px`
+      w.style.height = `${height}px`
     }
     if (left != undefined) {
       w.style.left = `${left}px`
@@ -313,11 +316,11 @@ export class WindowType extends Vue {
     const w = this.windowElement()
     const t = this.titlebarElement()
     const c = this.contentElement()
-    const { width: cW0, height: cH0 } = contentSize(c)
+    // const { width: cW0, height: cH0 } = contentSize(c)
     const { width: wW, height: wH } = contentSize(w)
     const tH = contentSize(t).height
-    const cW1 = wW - (c.offsetWidth - cW0)
-    const cH1 = (wH - tH - (c.offsetHeight - cH0))
+    const cW1 = wW
+    const cH1 = (wH - tH)
     c.style.width = `${cW1}px`
     c.style.height = `${cH1}px`
     fixPosition()
@@ -416,15 +419,8 @@ export class WindowType extends Vue {
   }
 
   private loadLastRect() {
-      const w = this.windowElement()
-      if(w.style.width != undefined && w.style.height != undefined && w.style.left != undefined && w.style.top != undefined){
-          this.lastRect = {width: parseFloat(w.style.width.substring(0,w.style.width.length - 2)),
-              height: parseFloat(w.style.height.substring(0,w.style.height.length - 2)) - this.titlebarElement().getBoundingClientRect().height,
-              left: parseFloat(w.style.left.substring(0,w.style.left.length - 2)),
-              top: parseFloat(w.style.top.substring(0,w.style.top.length - 2))
-          }
-      }
-
+    const w = this.windowElement()
+    this.lastRect = w.getBoundingClientRect()
   }
 }
 

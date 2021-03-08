@@ -1,27 +1,29 @@
 <template>
   <transition name="fade" @after-leave="$emit('close')" @after-enter="$emit('open')">
     <div v-show="isOpen" class="window" :style="styleWindow" ref="window" @mousedown="activate" @touchstart="activate">
-      <div class="titlebar" :style="styleTitlebar" ref="titlebar">
-        <div class="title">
-          <template v-if="closeButton">
-              <my-button @click="closeButtonClick">&times;</my-button>
-          </template>
-          <template v-if="maximizeButton">
-              <my-button @click="minimizeWindow">&minus;</my-button>
-          </template>
-          <template v-if="maximizeButton && maximized">
-              <my-button @click="maximizeWindow">&#128470;</my-button>
-          </template>
-          <template v-if="maximizeButton && !maximized">
-              <my-button @click="maximizeWindow">&plus;</my-button>
-          </template>
+      <div class="titlebar" :style="styleTitlebar" ref="titlebar" @click="activate">
+        <div class="title" style="text-align:center">
+          <div style="position: absolute; left:0" v-if="!minimized">
+            <template v-if="closeButton">
+                <my-button @click="closeButtonClick">&times;</my-button>
+            </template>
+            <template v-if="maximizeButton">
+                <my-button @click="minimizeSize">&minus;</my-button>
+            </template>
+            <template v-if="maximizeButton && maximized">
+                <my-button @click="defaultSize">&#128470;</my-button>
+            </template>
+            <template v-if="maximizeButton && !maximized">
+                <my-button @click="maximizeSize">&plus;</my-button>
+            </template>
+          </div>
           <template v-if="$slots.title">
             <slot name="title" />
           </template>
           <template v-else>{{title}}</template>
         </div>
       </div>
-      <div class="content" :style="styleContent" ref="content">
+      <div v-show="!minimized" class="content" :style="styleContent" ref="content">
         <slot />
       </div>
     </div>
