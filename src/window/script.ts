@@ -101,13 +101,16 @@ export class WindowType extends Vue {
     this.isOpen && this.onIsOpenChange(true)
     this.sizeState &&  this.onWindowSizeStateChange(this.sizeState)
     windows.add(this)
-    if(this.maximized){
-        this.maximizeSize()
-    }else if(this.minimized){
-        this.minimizeSize()
-    }else{
-        this.normalSize()
-    }
+    this.$nextTick(()=>{
+      if(this.maximized){
+          this.maximizeSize()
+      }else if(this.minimized){
+          this.minimizeSize()
+      }else{
+          this.normalSize()
+      }
+    })
+
   }
 
   beforeDestroy() {
@@ -158,7 +161,7 @@ export class WindowType extends Vue {
       this.maximized = true
       this.minimized = false
       this.setWindowRect({width:window.innerWidth - this.maximizeRightOffset,height:window.innerHeight - this.maximizeTopOffset,left:0,top:this.maximizeTopOffset})
-      this.onWindowResize(true)
+      this.onWindowResize(false)
       this.onWindowMove(false)
       this.$emit('update:sizeState', 'maximized')
       this.$emit('size-state-change', 'maximized')
@@ -195,6 +198,8 @@ export class WindowType extends Vue {
       }
       else
         this.setWindowRect({width:100,height:0,left:0,top:window.innerHeight - tH})
+      this.onWindowResize(false)
+      this.onWindowMove(false)
       this.$emit('update:sizeState', 'minimized')
       this.$emit('size-state-change', 'minimized')
   }

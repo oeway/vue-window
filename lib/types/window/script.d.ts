@@ -5,7 +5,6 @@ import { WindowStyle } from "../style";
 import { ZElement } from "../z_element";
 export declare class WindowType extends Vue {
     isOpen: boolean;
-    isActivate: boolean;
     title: string;
     closeButton: boolean;
     controlButtons: [];
