@@ -44,6 +44,7 @@ export default WindowType
   flex-flow: column;
   position: absolute;
   border-radius: 4pt 4pt 0 0;
+  max-width: 100%;
 }
 
 .titlebar {
