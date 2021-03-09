@@ -8,6 +8,8 @@ module.exports = {
         path: `${__dirname}/lib`,
         filename: 'index.js',
         libraryTarget: 'umd',
+        library: 'VueWindow',
+        umdNamedDefine: true
     },
     resolve: {
         extensions: ['.ts', '.js'],
