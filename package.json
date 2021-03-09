@@ -11,6 +11,7 @@
   "scripts": {
     "build": "webpack --mode production ; npm run standalone",
     "watch": "webpack --mode development --watch",
+    "publish-npm": "npm publish --access public",
     "example": "webpack --context example --config ./example/webpack.config.js --mode development",
     "example-server": "webpack-dev-server --hot --progress --context example --config ./example/webpack.config.js --mode development",
     "standalone": "webpack --context standalone --config ./standalone/webpack.config.js --mode production",
