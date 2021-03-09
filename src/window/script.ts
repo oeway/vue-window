@@ -159,6 +159,7 @@ export class WindowType extends Vue {
       if(!this.minimized && !this.maximized)
         this.loadLastRect()
       this.maximized = true
+      this.lastMaximized = true
       this.minimized = false
       this.setWindowRect({width:window.innerWidth - this.maximizeRightOffset,height:window.innerHeight - this.maximizeTopOffset,left:0,top:this.maximizeTopOffset})
       this.onWindowResize(false)
@@ -171,6 +172,7 @@ export class WindowType extends Vue {
       if(!this.minimized && !this.maximized)
         this.loadLastRect()
       this.maximized = false
+      this.lastMaximized = false
       this.minimized = false
       if(this.lastRect){
           this.setWindowRect(this.lastRect)
