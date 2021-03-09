@@ -1,4 +1,6 @@
 # vue-window
+This is a forked version of https://github.com/michitaro/vue-window
+
 ## Introduction
 Recent web applications are mainly for mobile environments. Therefore window UI is no longer mainstream.
 However, window UI is still useful for professional web applications for PC environments.
@@ -22,7 +24,7 @@ This package is an implementation of window UI for PC environment as a Vue Compo
 # Usage
 ## Install
 ```sh
-npm install --save @hscmap/vue-window
+npm install --save @oeway/vue-window
 ```
 
 ## Setup
@@ -30,7 +32,7 @@ npm install --save @hscmap/vue-window
 ### ES6 / TypeScript
 ```typescript
 import Vue from 'vue'
-import * as VueWindow from '@hscmap/vue-window'
+import * as VueWindow from '@oeway/vue-window'
 
 Vue.use(VueWindow)
 ```
@@ -38,7 +40,7 @@ Vue.use(VueWindow)
 ### CommonJS
 ```javascript
 var Vue = require('vue')
-Vue.use(require('@hscmap/vue-window'))
+Vue.use(require('@oeway/vue-window'))
 ```
 
 # Example
