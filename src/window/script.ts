@@ -101,9 +101,6 @@ export class WindowType extends Vue {
     this.isOpen && this.onIsOpenChange(true)
     this.sizeState &&  this.onWindowSizeStateChange(this.sizeState)
     windows.add(this)
-    this.loadLastRect()
-    this.lastRect.width = this.width || 600;
-    this.lastRect.height = this.height || 400;
     this.$nextTick(()=>{
       if(this.maximized){
           this.maximizeSize()
