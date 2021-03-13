@@ -169,8 +169,6 @@ export class WindowType extends Vue {
   }
 
   normalSize() {
-      if(!this.minimized && !this.maximized)
-        this.loadLastRect()
       this.maximized = false
       this.lastMaximized = false
       this.minimized = false

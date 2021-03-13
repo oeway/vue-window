@@ -1,6 +1,6 @@
 {
   "name": "@oeway/vue-window",
-  "version": "2.4.1-a",
+  "version": "2.4.1-b",
   "description": "Vue component for window",
   "main": "./lib/index.js",
   "types": "./lib/types/index.d.ts",
