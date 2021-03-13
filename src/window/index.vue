@@ -80,6 +80,6 @@ export default WindowType
 
 .fade-enter-active,
 .fade-leave-active {
-  transition: 0.2s;
+  transition: 0.05s;
 }
 </style>

@@ -101,6 +101,9 @@ export class WindowType extends Vue {
     this.isOpen && this.onIsOpenChange(true)
     this.sizeState &&  this.onWindowSizeStateChange(this.sizeState)
     windows.add(this)
+    this.loadLastRect()
+    this.lastRect.width = this.width || 600;
+    this.lastRect.height = this.height || 400;
     this.$nextTick(()=>{
       if(this.maximized){
           this.maximizeSize()
@@ -161,7 +164,7 @@ export class WindowType extends Vue {
       this.maximized = true
       this.lastMaximized = true
       this.minimized = false
-      this.setWindowRect({width:window.innerWidth - this.maximizeRightOffset,height:window.innerHeight - this.maximizeTopOffset,left:0,top:this.maximizeTopOffset})
+      this.setWindowRect({width: window.innerWidth - this.maximizeRightOffset, height: window.innerHeight - this.maximizeTopOffset,left:0,top:this.maximizeTopOffset})
       this.onWindowResize(false)
       this.onWindowMove(false)
       this.$emit('update:sizeState', 'maximized')
@@ -175,7 +178,7 @@ export class WindowType extends Vue {
       if(this.lastRect){
           this.setWindowRect(this.lastRect)
       }else{
-          this.setWindowRect({width:this.width,height:this.height})
+          this.setWindowRect({width: this.width, height: this.height})
       }
 
       this.onWindowResize(false)
@@ -237,7 +240,7 @@ export class WindowType extends Vue {
 
   @Watch('sizeState')
   onWindowSizeStateChange(sizeState: string) {
-    this.$nextTick(() => {
+    setTimeout(() => {
       if(sizeState==='maximized'){
         if(!this.maximized)
         this.maximizeSize()
@@ -261,7 +264,7 @@ export class WindowType extends Vue {
       }
     
       this.onWindowResize(false)
-    })
+    }, 100)
   }
 
   @Watch('isOpen')
