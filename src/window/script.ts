@@ -487,15 +487,10 @@ export class WindowType extends Vue {
 }
 
 
-function css2num(s: string | null) {
-  return s !== null ? parseFloat(s) : 0
-}
-
 
 function contentSize(el: HTMLElement) {
-  const s = window.getComputedStyle(el)
-  const width = Math.ceil([s.paddingLeft, s.width, s.paddingRight].map(css2num).reduce((a, b) => a + b))
-  const height = Math.ceil([s.paddingTop, s.height, s.paddingBottom].map(css2num).reduce((a, b) => a + b))
+  const width = el.clientWidth
+  const height = el.clientHeight
   return { width, height }
 }
 

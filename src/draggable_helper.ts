@@ -33,6 +33,8 @@ export class DraggableHelper {
     this.offsetX = e.clientX - left
     this.offsetY = e.clientY - top
     this.options.onMoveStart && this.options.onMoveStart()
+    if(this.unbindUp) this.unbindUp!()
+    if(this.unbindMove) this.unbindMove!()
     this.unbindMove = SinglePointerEvent.bindMove(document, this.mousemove)
     this.unbindUp = SinglePointerEvent.bindUp(document, this.mouseup)   
   }
